@@ -1,12 +1,24 @@
 import React from "react";
 import { Metadata } from "next";
-import { Compass, Eye, ShieldCheck, Star, Award, Zap, Handshake, Heart } from "lucide-react";
+import { Compass, Eye, ShieldCheck, Award, Zap, Handshake, Heart } from "lucide-react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { getOrganizationSchema } from "@/lib/seo/schemas";
 
 export const metadata: Metadata = {
   title: "About Us | Luxury Indian Textile Exporter | Sahajway Impex",
   description: "Learn about the origins of Sahajway Impex in Anand, Gujarat. Established in August 2025 with a vision to connect Indian craftsmanship with international B2B trade.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Sahajway Impex - Heritage & Global Trade",
+    description: "Ethical artisan sourcing, international quality standards, and luxury cotton export.",
+    url: "/about",
+  },
 };
 
 const values = [
@@ -43,8 +55,21 @@ const values = [
 ];
 
 export default function AboutPage() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
+
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${siteUrl}/about#webpage`,
+    url: `${siteUrl}/about`,
+    name: "About Sahajway Impex - Indian B2B Export House",
+    description: "Corporate heritage, vision, ethical artisan sourcing, and global trade commitments of Sahajway Impex.",
+    mainEntity: getOrganizationSchema(),
+  };
+
   return (
     <>
+      <JsonLd schema={aboutSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative overflow-hidden bg-gradient-premium">
@@ -52,7 +77,9 @@ export default function AboutPage() {
         <div className="absolute top-1/5 left-1/12 w-[400px] h-[400px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/5 right-1/12 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-28">
+        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-12">
+          <Breadcrumbs items={[{ name: "About Us", url: "/about" }]} />
+
           {/* Header titles */}
           <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto">
             <h1 className="text-xs font-mono tracking-widest text-accent-blue uppercase">

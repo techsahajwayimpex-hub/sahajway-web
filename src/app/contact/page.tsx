@@ -4,15 +4,39 @@ import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, MessageSquare, Shie
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import ContactForm from "@/components/contact/ContactForm";
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { getLocalBusinessSchema } from "@/lib/seo/schemas";
 
 export const metadata: Metadata = {
   title: "Contact B2B Trade Relations | Sahajway Impex",
   description: "Get in touch with Sahajway Impex in Anand, Gujarat. Request custom quotes for B2B textile exports, Jaipuri double quilts, and quilted cotton bags.",
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    title: "Contact B2B Trade Desk | Sahajway Impex",
+    description: "Request custom B2B wholesale pricing, fabric swatches, and international freight quotes.",
+    url: "/contact",
+  },
 };
 
 export default function ContactPage() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
+
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${siteUrl}/contact#webpage`,
+    url: `${siteUrl}/contact`,
+    name: "Sahajway Impex B2B Trade Desk & Inquiries",
+    description: "Direct contact channel for international buyers to procure handcrafted Indian textiles and goods.",
+    mainEntity: getLocalBusinessSchema(),
+  };
+
   return (
     <>
+      <JsonLd schema={contactSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative overflow-hidden bg-gradient-premium">
@@ -20,7 +44,9 @@ export default function ContactPage() {
         <div className="absolute top-1/4 right-1/10 w-[400px] h-[400px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 left-1/10 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-16">
+        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-10">
+          <Breadcrumbs items={[{ name: "Contact Trade Desk", url: "/contact" }]} />
+
           {/* Header titles */}
           <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto">
             <h1 className="text-xs font-mono tracking-widest text-accent-blue uppercase">

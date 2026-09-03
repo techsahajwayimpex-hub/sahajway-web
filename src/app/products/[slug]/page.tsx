@@ -41,6 +41,10 @@ async function getProductBySlug(slug: string) {
   }
 }
 
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { getProductSchema } from "@/lib/seo/schemas";
+
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -52,13 +56,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const title = product.seoTitle || `${product.name} | B2B Export Specification | Sahajway Impex`;
+  const description =
+    product.seoDescription ||
+    product.shortDescription ||
+    `Export specifications and wholesale sourcing for ${product.name} from Anand, Gujarat, India.`;
+
   return {
-    title: `${product.seoTitle || product.name} | Sahajway Impex`,
-    description: product.seoDescription || product.shortDescription,
+    title,
+    description,
+    alternates: {
+      canonical: `/products/${product.slug}`,
+    },
     openGraph: {
-      title: `${product.name} - Premium Export Specifications`,
-      description: product.shortDescription,
-      images: [{ url: product.images?.[0] || "" }],
+      title: `${product.name} - B2B Export Specifications`,
+      description,
+      type: "article",
+      images: [
+        {
+          url: product.images?.[0] || `/products/${product.slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Sahajway Impex`,
+      description,
     },
   };
 }
@@ -72,38 +98,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // Generate structured product schema for SEO ranking
-  const productSchema = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": product.name,
-    "image": product.images,
-    "description": product.shortDescription,
-    "category": product.category,
-    "offers": {
-      "@type": "AggregateOffer",
-      "priceCurrency": "USD",
-      "price": "Contact for Quote",
-      "offeredBy": {
-        "@type": "Organization",
-        "name": "Sahajway Impex",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Anand",
-          "addressRegion": "Gujarat",
-          "addressCountry": "IN"
-        }
-      }
-    }
-  };
+  const productSchema = getProductSchema({
+    name: product.name,
+    slug: product.slug,
+    description: product.shortDescription || product.name,
+    category: product.category,
+    images: product.images || [],
+    specifications: product.specifications || [],
+    updatedAt: product.updatedAt,
+  });
+
+  const breadcrumbItems = [
+    { name: "Products", url: "/products" },
+    { name: product.name, url: `/products/${product.slug}` },
+  ];
 
   return (
     <>
-      {/* Inject Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-      />
-
+      <JsonLd schema={productSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative bg-gradient-premium">
@@ -111,15 +123,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <div className="absolute top-1/6 right-1/12 w-[400px] h-[400px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/6 left-1/12 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-8">
-          {/* Back button */}
-          <Link
-            href="/products"
-            className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-slate-900 transition-colors w-fit focus:outline-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back to Export Catalog
-          </Link>
+        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-6">
+          {/* Breadcrumb Navigation & Schema */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <Breadcrumbs items={breadcrumbItems} />
+            <Link
+              href="/products"
+              className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-slate-900 transition-colors w-fit focus:outline-none"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back to Catalog
+            </Link>
+          </div>
 
           {/* Cinematic Split Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

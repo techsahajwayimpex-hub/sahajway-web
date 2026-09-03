@@ -10,7 +10,8 @@ import {
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import { Search, Download, Eye, X, ChevronDown, ChevronUp, ChevronsUpDown, Calendar, Globe, Mail, Phone, Building } from "lucide-react";
+import { Search, Download, Eye, Trash2, X, ChevronDown, ChevronUp, ChevronsUpDown, Calendar, Globe, Mail, Phone, Building, Loader2 } from "lucide-react";
+import { deleteInquiry } from "@/app/actions/inquiry";
 
 interface Inquiry {
   _id: string;
@@ -35,6 +36,20 @@ export default function InquiryCMSClient({ inquiries }: InquiryCMSClientProps) {
   const [countryFilter, setCountryFilter] = useState("");
   const [productFilter, setProductFilter] = useState("");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this inquiry?")) return;
+    setDeletingId(id);
+    try {
+      await deleteInquiry(id);
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete inquiry");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   // Extract unique countries and products for dropdown filters
   const uniqueCountries = useMemo(() => {
@@ -134,15 +149,29 @@ export default function InquiryCMSClient({ inquiries }: InquiryCMSClientProps) {
       }),
       columnHelper.display({
         id: "actions",
-        header: "Inspect",
+        header: "Actions",
         cell: (info) => (
-          <button
-            onClick={() => setSelectedInquiry(info.row.original)}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 cursor-pointer"
-            title="Read Inquiry Details"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setSelectedInquiry(info.row.original)}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 cursor-pointer"
+              title="Read Inquiry Details"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleDelete(info.row.original._id)}
+              disabled={deletingId === info.row.original._id}
+              className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer disabled:opacity-50"
+              title="Delete Inquiry"
+            >
+              {deletingId === info.row.original._id ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+            </button>
+          </div>
         ),
       }),
     ],

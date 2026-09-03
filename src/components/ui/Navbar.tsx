@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowRight, Globe } from "lucide-react";
+import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 import Logo from "./Logo";
 
 const navLinks = [
@@ -79,8 +80,23 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* CTA / Global Portal Button */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* CTA & Clerk Auth Controls */}
+          <div className="hidden md:flex items-center gap-3">
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <button className="text-xs font-semibold uppercase tracking-wider text-slate-600 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="text-xs font-semibold uppercase tracking-wider text-slate-600 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
             <Link
               href="/contact"
               className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] hover:from-accent-gold-hover hover:to-white transition-all duration-300 shadow-md shadow-accent-gold/20 hover:scale-105"
@@ -138,6 +154,28 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-6">
               <div className="h-[1px] bg-slate-200" />
+              <div className="flex items-center justify-between py-1">
+                <Show when="signed-out">
+                  <div className="flex items-center gap-3">
+                    <SignInButton mode="modal">
+                      <button className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-accent-gold px-2 py-1">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-accent-gold px-2 py-1">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </div>
+                </Show>
+                <Show when="signed-in">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-slate-600 font-medium">My Account</span>
+                    <UserButton />
+                  </div>
+                </Show>
+              </div>
               <Link
                 href="/contact"
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] text-center hover:opacity-90"
