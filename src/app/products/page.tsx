@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
-import { ArrowLeft, ArrowRight, Layers, SlidersHorizontal, RefreshCw, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ArrowRight, Layers, SlidersHorizontal, RefreshCw } from "lucide-react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import SearchInput from "@/components/products/SearchInput";
@@ -10,17 +10,24 @@ import { connectDB, readMockDB, isUsingMockDB } from "@/lib/db";
 import ProductModel from "@/lib/models/Product";
 import CategoryModel from "@/lib/models/Category";
 
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+
 export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Premium B2B Export Product Catalog | Sahajway Impex",
   description: "Browse our premium export products catalog including hand-block printed baby bathrobes, double quilts, and canvas tote bags sourced directly from Anand, Gujarat, India.",
   keywords: ["Textile Exporter India", "Indian Cotton Products", "Jaipuri Quilts Wholesale", "Premium Cotton Bags"],
+  alternates: {
+    canonical: "/products",
+  },
   openGraph: {
     title: "Premium B2B Export Catalog | Sahajway Impex",
     description: "Ethical sourcing and premium textiles exported worldwide from Gujarat, India.",
     type: "website",
-  }
+    url: "/products",
+  },
 };
 
 interface PageProps {
@@ -158,8 +165,22 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     return `/products?${queryParams.toString()}`;
   };
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
+
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: products.map((prod: any, index: number) => ({
+      "@type": "ListItem",
+      position: (currentPage - 1) * limit + index + 1,
+      name: prod.name,
+      url: `${baseUrl}/products/${prod.slug}`,
+    })),
+  };
+
   return (
     <>
+      <JsonLd schema={itemListSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative overflow-hidden bg-gradient-premium">
@@ -167,7 +188,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         <div className="absolute top-1/6 right-1/12 w-[400px] h-[400px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/6 left-1/12 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-12">
+        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-8">
+          <Breadcrumbs items={[{ name: "Products Catalog", url: "/products" }]} />
+
           {/* Header titles */}
           <div className="flex flex-col gap-4 text-left max-w-2xl">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">

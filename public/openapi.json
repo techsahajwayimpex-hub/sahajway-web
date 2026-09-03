@@ -1,0 +1,82 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sahajway Impex B2B AI & Catalog API",
+    "description": "Public semantic API enabling AI search engines, agents, and procurement systems to query live product specifications, MOQ, lead times, and trade terms for Sahajway Impex.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Sahajway Impex Trade Desk",
+      "email": "contact@sahajwayimpex.com",
+      "url": "https://sahajwayimpex.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://sahajwayimpex.com",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/api/ai/knowledge": {
+      "get": {
+        "summary": "Retrieve complete company knowledge graph, export policies, and live product catalog",
+        "description": "Returns structured JSON formatted for LLM consumption, answering questions regarding Incoterms, MOQ, materials, and international shipping.",
+        "operationId": "getAiKnowledge",
+        "responses": {
+          "200": {
+            "description": "Structured AI knowledge base payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "KnowledgeResponse": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "object"
+          },
+          "logistics": {
+            "type": "object"
+          },
+          "faqs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": { "type": "string" },
+                "answer": { "type": "string" }
+              }
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "slug": { "type": "string" },
+                "category": { "type": "string" },
+                "shortDescription": { "type": "string" },
+                "specifications": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "exportInformation": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

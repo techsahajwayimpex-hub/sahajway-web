@@ -18,6 +18,14 @@ import GlobeSection from "@/components/home/GlobeSection";
 import { connectDB, readMockDB, isUsingMockDB } from "@/lib/db";
 import ProductModel from "@/lib/models/Product";
 
+import JsonLd from "@/components/seo/JsonLd";
+import {
+  getOrganizationSchema,
+  getFAQSchema,
+  defaultExportFAQs,
+  getB2BProcurementHowToSchema,
+} from "@/lib/seo/schemas";
+
 // Disable server caching so updates in admin dashboard show up immediately
 export const revalidate = 0;
 
@@ -45,32 +53,15 @@ async function getFeaturedProducts() {
 export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts();
 
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Sahajway Impex",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: "+91-96380-07789",
-      contactType: "trade relations office",
-      email: "contact@sahajwayimpex.com",
-      areaServed: "worldwide",
-    },
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Anand",
-      addressRegion: "Gujarat",
-      addressCountry: "India",
-    },
-  };
+  const schemas = [
+    getOrganizationSchema(),
+    getFAQSchema(defaultExportFAQs),
+    getB2BProcurementHowToSchema(),
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
+      <JsonLd schema={schemas} />
       <Navbar />
 
       <main className="flex-1">

@@ -7,11 +7,22 @@ import Footer from "@/components/ui/Footer";
 import { connectDB, readMockDB, isUsingMockDB } from "@/lib/db";
 import TeamMemberModel from "@/lib/models/TeamMember";
 
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+
 export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Executive Board & Leadership | Sahajway Impex",
   description: "Meet the executive board directing Sahajway Impex in India and USA. Premium B2B trade leaders connecting local craft centers with global ports.",
+  alternates: {
+    canonical: "/team",
+  },
+  openGraph: {
+    title: "Executive Board & Leadership | Sahajway Impex",
+    description: "Meet the leaders managing Indian artisan partnerships and international B2B logistics.",
+    url: "/team",
+  },
 };
 
 // Fetch team members dynamically from MongoDB (or local mock DB)
@@ -46,6 +57,30 @@ async function getTeamMembers() {
 
 export default async function TeamPage() {
   const teamMembers = await getTeamMembers();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
+
+  const teamSchema = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": `${siteUrl}/team#webpage`,
+    url: `${siteUrl}/team`,
+    name: "Executive Leadership & Board | Sahajway Impex",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: teamMembers.map((member: any, index: number) => ({
+        "@type": "Person",
+        position: index + 1,
+        name: member.name,
+        jobTitle: member.designation,
+        worksFor: {
+          "@type": "Organization",
+          name: "Sahajway Impex",
+        },
+        image: member.image,
+        description: member.bio,
+      })),
+    },
+  };
 
   // Find Prit Patel for special India MD spotlight
   const indiaMd = teamMembers.find(
@@ -57,6 +92,7 @@ export default async function TeamPage() {
 
   return (
     <>
+      <JsonLd schema={teamSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative overflow-hidden bg-gradient-premium">
@@ -64,7 +100,9 @@ export default async function TeamPage() {
         <div className="absolute top-1/6 right-1/10 w-[450px] h-[450px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/6 left-1/10 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-20">
+        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-10">
+          <Breadcrumbs items={[{ name: "Leadership Team", url: "/team" }]} />
+
           {/* Section Titles */}
           <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto">
             <h1 className="text-xs font-mono tracking-widest text-[#00d4ff] uppercase">

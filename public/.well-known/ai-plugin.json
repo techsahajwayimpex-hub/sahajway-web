@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_model": "sahajway_impex_trade_desk",
+  "name_for_human": "Sahajway Impex B2B Trade Desk",
+  "description_for_model": "Queries product catalog, export specifications, MOQs, Incoterms, and B2B trade capabilities for Sahajway Impex, a premier Indian textile and lifestyle exporter based in Anand, Gujarat, India.",
+  "description_for_human": "Explore export-grade Indian cotton textiles, Jaipuri quilts, baby bathrobes, and request wholesale B2B quotations.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://sahajwayimpex.com/openapi.json"
+  },
+  "logo_url": "https://sahajwayimpex.com/logo.png",
+  "contact_email": "contact@sahajwayimpex.com",
+  "legal_info_url": "https://sahajwayimpex.com/about"
+}

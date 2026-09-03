@@ -24,9 +24,13 @@ const MOCK_UPLOAD_DIR = path.join(process.cwd(), "public/uploads");
 /**
  * Uploads an image (either as a base64 string or file path)
  * @param fileData Base64 string, image URL, or local path
+ * @param folder Cloudinary target folder (default: sahajway-impex/products)
  * @returns The public URL of the uploaded image
  */
-export async function uploadImage(fileData: string): Promise<string> {
+export async function uploadImage(
+  fileData: string,
+  folder: string = "sahajway-impex/products"
+): Promise<string> {
   if (!isCloudinaryConfigured) {
     console.log("Cloudinary is not configured. Simulating upload locally...");
     
@@ -65,7 +69,8 @@ export async function uploadImage(fileData: string): Promise<string> {
 
   try {
     const uploadResponse = await cloudinary.uploader.upload(fileData, {
-      folder: "sahajway_impex",
+      folder,
+      resource_type: "image",
     });
     return uploadResponse.secure_url;
   } catch (error) {
@@ -97,12 +102,14 @@ export async function deleteImage(imageUrl: string): Promise<boolean> {
   }
 
   try {
-    // Extract public ID from Cloudinary URL
-    const urlParts = imageUrl.split("/");
-    const filenameWithExt = urlParts[urlParts.length - 1];
-    const folderPart = urlParts[urlParts.length - 2];
-    const publicId = `sahajway_impex/${filenameWithExt.split(".")[0]}`;
-
+    // Extract public ID from Cloudinary URL (e.g., .../upload/v12345/sahajway-impex/products/sample.jpg)
+    const regex = /\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/;
+    const match = imageUrl.match(regex);
+    if (!match || !match[1]) {
+      console.warn("Could not parse Cloudinary publicId from URL:", imageUrl);
+      return false;
+    }
+    const publicId = match[1];
     const result = await cloudinary.uploader.destroy(publicId);
     return result.result === "ok";
   } catch (error) {

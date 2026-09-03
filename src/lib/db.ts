@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/sahajwayimpex";
+const MONGODB_URI = process.env.MONGODB_URI || "";
 const DATABASE_NAME = process.env.DATABASE_NAME || "sahajwayimpex";
 
 // Global cache to prevent multiple connections in Next.js hot-reloads
@@ -18,15 +18,14 @@ if (!cached) {
 }
 
 // Check if we should use mock database
-export const isUsingMockDB = 
-  !process.env.MONGODB_URI || 
-  process.env.MONGODB_URI.includes("placeholder") ||
-  process.env.MONGODB_URI.includes("localhost:27017") && !process.env.FORCE_REAL_DB;
+export const isUsingMockDB =
+  !process.env.MONGODB_URI ||
+  process.env.MONGODB_URI.includes("placeholder");
 
 const MOCK_DB_PATH = path.join(process.cwd(), "src/lib/mock_db_store.json");
 
 // Initial seed data
-const initialMockData = {
+export const initialMockData = {
   categories: [
     {
       _id: "cat_1",
@@ -211,18 +210,19 @@ export async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      dbName: DATABASE_NAME
+      dbName: DATABASE_NAME,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log("MongoDB connected successfully");
-      return mongooseInstance;
-    }).catch((err) => {
-      console.error("MongoDB connection failed. Falling back to Mock DB.", err);
-      // Change connection mode to mock dynamically
-      (global as any).forceMockDB = true;
-      throw err;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongooseInstance) => {
+        console.log(`[MongoDB] Connected successfully to database: ${DATABASE_NAME}`);
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        console.error("[MongoDB] Connection failed, falling back to mock mode:", err.message);
+        throw err;
+      });
   }
 
   try {

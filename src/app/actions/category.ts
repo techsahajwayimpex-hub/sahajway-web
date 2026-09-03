@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { connectDB, isUsingMockDB, readMockDB, writeMockDB } from "@/lib/db";
 import CategoryModel from "@/lib/models/Category";
-import ProductModel from "@/lib/models/Product";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
 import { getAdminSession } from "@/lib/auth";
 
