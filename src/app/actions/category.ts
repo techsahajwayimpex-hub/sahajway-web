@@ -31,7 +31,7 @@ export async function createCategory(data: {
   // Upload image to Cloudinary/local if present
   if (data.imageData) {
     try {
-      imageUrl = await uploadImage(data.imageData);
+      imageUrl = await uploadImage(data.imageData, "sahajway-impex/categories");
     } catch (err) {
       console.error("Failed to upload category image, using fallback:", err);
     }
@@ -113,7 +113,7 @@ export async function updateCategory(
       if (imageUrl && !imageUrl.includes("unsplash.com")) {
         await deleteImage(imageUrl);
       }
-      imageUrl = await uploadImage(data.imageData);
+      imageUrl = await uploadImage(data.imageData, "sahajway-impex/categories");
     } catch (err) {
       console.error("Failed to replace category image:", err);
     }

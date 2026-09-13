@@ -1,15 +1,18 @@
 import React from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, Layers, ShoppingBag, Users, Mail, ArrowLeft, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, Layers, ShoppingBag, Users, Mail, ArrowLeft, ShieldAlert, Sliders, Globe } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import AdminSignOutButton from "@/components/admin/SignOutButton";
+import AdminAccessDeniedActions from "@/components/admin/AdminAccessDeniedActions";
 import { getAdminSession } from "@/lib/auth";
 
 export const revalidate = 0;
 
 const menuItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
+  { label: "Hero Banners", href: "/admin/banners", icon: Sliders },
+  { label: "Trade Destinations", href: "/admin/destinations", icon: Globe },
   { label: "Categories", href: "/admin/categories", icon: Layers },
   { label: "Products", href: "/admin/products", icon: ShoppingBag },
   { label: "Team Members", href: "/admin/team", icon: Users },
@@ -35,20 +38,7 @@ export default async function AdminLayout({
           <p className="text-slate-500 text-sm leading-relaxed">
             Your account ({session.email || "Guest"}) does not have administrator privileges to access the trade CMS. Please sign in with an approved corporate email.
           </p>
-          <div className="flex gap-4 w-full">
-            <Link
-              href="/"
-              className="flex-1 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-900 border border-slate-200 bg-slate-100/40 text-center hover:bg-slate-100/60"
-            >
-              Public Site
-            </Link>
-            <Link
-              href="/sign-in"
-              className="flex-1 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider text-black bg-white text-center hover:bg-gray-100"
-            >
-              Sign In
-            </Link>
-          </div>
+          <AdminAccessDeniedActions userEmail={session.email} />
         </div>
       </main>
     );

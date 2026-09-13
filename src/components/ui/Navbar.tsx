@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Globe } from "lucide-react";
-import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
+import { Menu, X, ArrowRight } from "lucide-react";
 import Logo from "./Logo";
 
 const navLinks = [
@@ -41,14 +40,9 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "glass-navbar py-4 shadow-md shadow-slate-100/50"
-            : "bg-transparent py-6"
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-navbar ${
+          scrolled ? "py-3.5 shadow-md shadow-slate-900/5 bg-white/90" : "py-4.5 bg-white/80"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -80,26 +74,11 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* CTA & Clerk Auth Controls */}
+          {/* CTA Inquire Button */}
           <div className="hidden md:flex items-center gap-3">
-            <Show when="signed-out">
-              <SignInButton mode="modal">
-                <button className="text-xs font-semibold uppercase tracking-wider text-slate-600 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer">
-                  Sign In
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="text-xs font-semibold uppercase tracking-wider text-slate-600 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </Show>
-            <Show when="signed-in">
-              <UserButton />
-            </Show>
             <Link
               href="/contact"
-              className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] hover:from-accent-gold-hover hover:to-white transition-all duration-300 shadow-md shadow-accent-gold/20 hover:scale-105"
+              className="group flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] hover:from-accent-gold-hover hover:to-white transition-all duration-300 shadow-md shadow-accent-gold/20 hover:scale-105 cursor-pointer"
             >
               Inquire Now
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -109,13 +88,13 @@ export default function Navbar() {
           {/* Mobile Menu Buttons */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
+            className="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-      </motion.header>
+      </header>
 
       {/* Mobile Glass Overlay Menu */}
       <AnimatePresence>
@@ -125,7 +104,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 top-[80px] z-40 md:hidden bg-background/95 backdrop-blur-xl border-t border-slate-200/60 px-6 py-10 flex flex-col justify-between"
+            className="fixed inset-0 top-[72px] z-40 md:hidden bg-white/98 backdrop-blur-xl border-t border-slate-200 shadow-xl px-6 py-10 flex flex-col justify-between"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link, idx) => {
@@ -154,38 +133,15 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-6">
               <div className="h-[1px] bg-slate-200" />
-              <div className="flex items-center justify-between py-1">
-                <Show when="signed-out">
-                  <div className="flex items-center gap-3">
-                    <SignInButton mode="modal">
-                      <button className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-accent-gold px-2 py-1">
-                        Sign In
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                      <button className="text-sm font-semibold uppercase tracking-wider text-slate-700 hover:text-accent-gold px-2 py-1">
-                        Sign Up
-                      </button>
-                    </SignUpButton>
-                  </div>
-                </Show>
-                <Show when="signed-in">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-slate-600 font-medium">My Account</span>
-                    <UserButton />
-                  </div>
-                </Show>
-              </div>
               <Link
                 href="/contact"
-                className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] text-center hover:opacity-90"
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-semibold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-[#fef08a] text-center hover:opacity-90 shadow-md"
               >
                 Inquire Now
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <div className="flex items-center gap-2 justify-center text-xs text-slate-400 font-mono">
-                <Globe className="w-4 h-4 text-accent-blue animate-spin-slow" />
-                GLOBAL TRADING CHANNELS ACTIVE
+              <div className="flex items-center justify-center text-xs text-slate-500 font-mono tracking-wider uppercase">
+                Direct Export Channels • Anand, Gujarat
               </div>
             </div>
           </motion.div>

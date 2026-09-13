@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import JsonLd from "@/components/seo/JsonLd";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import {
   getOrganizationSchema,
   getLocalBusinessSchema,
@@ -146,6 +147,7 @@ export default function RootLayout({
         <ClerkProvider>
           {children}
         </ClerkProvider>
+        <WhatsAppButton />
       </body>
     </html>
   );

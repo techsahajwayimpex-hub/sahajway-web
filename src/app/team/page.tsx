@@ -1,9 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import { Metadata } from "next";
-import { Mail, Linkedin, MapPin, Sparkles, Shield } from "lucide-react";
+import { Mail, Linkedin, MapPin, Users, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
+import PageHero from "@/components/ui/PageHero";
 import { connectDB, readMockDB, isUsingMockDB } from "@/lib/db";
 import TeamMemberModel from "@/lib/models/TeamMember";
 
@@ -14,13 +16,15 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Executive Board & Leadership | Sahajway Impex",
-  description: "Meet the executive board directing Sahajway Impex in India and USA. Premium B2B trade leaders connecting local craft centers with global ports.",
+  description:
+    "Meet the executive leadership team directing Sahajway Impex across India and international destinations. Leading B2B textile trade, ethical artisan sourcing, and global logistics.",
   alternates: {
     canonical: "/team",
   },
   openGraph: {
     title: "Executive Board & Leadership | Sahajway Impex",
-    description: "Meet the leaders managing Indian artisan partnerships and international B2B logistics.",
+    description:
+      "Meet the leadership team managing Indian artisan partnerships and international B2B export logistics.",
     url: "/team",
   },
 };
@@ -29,19 +33,25 @@ export const metadata: Metadata = {
 async function getTeamMembers() {
   if (isUsingMockDB) {
     const data = readMockDB();
-    return data.team
+    return (data.team || [])
       .filter((t: any) => t.active)
       .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
   }
 
   try {
-    await connectDB();
+    const conn = await connectDB();
+    if (!conn) {
+      const data = readMockDB();
+      return (data.team || [])
+        .filter((t: any) => t.active)
+        .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
+    }
     const team = await TeamMemberModel.find({ active: true })
       .sort({ displayOrder: 1 })
       .lean();
     if (!team || team.length === 0) {
       const data = readMockDB();
-      return data.team
+      return (data.team || [])
         .filter((t: any) => t.active)
         .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
     }
@@ -49,7 +59,7 @@ async function getTeamMembers() {
   } catch (error) {
     console.error("Team query failed, using mock data fallback:", error);
     const data = readMockDB();
-    return data.team
+    return (data.team || [])
       .filter((t: any) => t.active)
       .sort((a: any, b: any) => a.displayOrder - b.displayOrder);
   }
@@ -57,7 +67,8 @@ async function getTeamMembers() {
 
 export default async function TeamPage() {
   const teamMembers = await getTeamMembers();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://sahajwayimpex.com";
 
   const teamSchema = {
     "@context": "https://schema.org",
@@ -82,169 +93,117 @@ export default async function TeamPage() {
     },
   };
 
-  // Find Prit Patel for special India MD spotlight
-  const indiaMd = teamMembers.find(
-    (t: any) => t.name.toLowerCase().includes("prit") || t.designation.toLowerCase().includes("india")
-  );
-
-  // Remaining board directors (e.g. USA Director)
-  const remainingDirectors = teamMembers.filter((t: any) => t._id !== indiaMd?._id);
-
   return (
     <>
       <JsonLd schema={teamSchema} />
       <Navbar />
 
-      <main className="flex-1 min-h-screen pt-32 pb-24 relative overflow-hidden bg-gradient-premium">
+      <PageHero
+        title={
+          <>
+            Meet Our <span className="text-gradient-gold">Team</span>
+          </>
+        }
+        subtitle="Directing trade logistics, artisanal manufacturing partnerships, quality compliance, and international client relationships between Anand, Gujarat and global trade channels."
+        backgroundImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=80"
+        breadcrumbs={[{ name: "Our Team", url: "/team" }]}
+        align="center"
+      />
+
+      <main className="flex-1 min-h-screen py-16 relative overflow-hidden bg-gradient-premium">
         {/* Decorative background visual elements */}
-        <div className="absolute top-1/6 right-1/10 w-[450px] h-[450px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/6 left-1/10 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
+        <div className="absolute top-1/6 right-1/10 w-[450px] h-[450px] rounded-full bg-glow-blue opacity-10 filter blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/6 left-1/10 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-10 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col gap-10">
-          <Breadcrumbs items={[{ name: "Leadership Team", url: "/team" }]} />
+        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-12">
+          {/* TEAM MEMBERS GRID */}
+          {teamMembers.length === 0 ? (
+            <div className="py-24 text-center glass-panel rounded-3xl p-12 max-w-lg mx-auto flex flex-col items-center gap-4">
+              <Users className="w-12 h-12 text-slate-400" />
+              <h3 className="text-lg font-bold text-slate-900">
+                Leadership Board Updating
+              </h3>
+              <p className="text-sm text-slate-500">
+                Team member profiles are currently being updated. Please check
+                back shortly.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider text-black bg-gradient-to-r from-accent-gold to-white hover:opacity-90 transition-opacity mt-2"
+              >
+                Contact Headquarters
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {teamMembers.map((member: any) => (
+                <div
+                  key={member._id || member.name}
+                  className="glass-panel glass-panel-hover rounded-3xl p-6 flex flex-col justify-between gap-6 hover:border-white transition-all duration-300 group shadow-sm hover:shadow-2xl"
+                >
+                  <div className="flex flex-col gap-5">
+                    {/* Member Photo Container */}
+                    <div className="relative w-full h-[300px] rounded-2xl overflow-hidden bg-slate-900 border border-slate-200/60 shadow-inner">
+                      {member.image ? (
+                        <Image
+                          src={member.image}
+                          alt={member.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <Users className="w-16 h-16" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a2540]/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                    </div>
 
-          {/* Section Titles */}
-          <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto">
-            <h1 className="text-xs font-mono tracking-widest text-[#00d4ff] uppercase">
-              Corporate Governance
-            </h1>
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Executive <span className="text-gradient-gold">Leadership Board</span>
-            </h2>
-            <p className="text-slate-500 text-sm leading-relaxed">
-              Leading the trade logistics, quality compliance, and international client relationships between India and global destination channels.
-            </p>
-          </div>
-
-          {/* SPOTLIGHT SECTION: MANAGING DIRECTOR (INDIA) */}
-          {indiaMd && (
-            <section className="flex flex-col gap-8 text-left">
-              <span className="text-xs font-mono uppercase tracking-widest text-slate-400 flex items-center gap-1.5 pl-1">
-                <Shield className="w-4 h-4 text-accent-gold" />
-                Central HQ Command
-              </span>
-              
-              <div className="glass-panel p-8 md:p-12 rounded-3xl grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center hover:border-slate-200 transition-all duration-500">
-                {/* Director Avatar image */}
-                <div className="md:col-span-5 h-[320px] rounded-2xl overflow-hidden relative border border-slate-200/60 bg-slate-900 shadow-2xl">
-                  <Image
-                    src={indiaMd.image}
-                    alt={indiaMd.name}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030810]/75 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 flex items-center gap-1 text-[10px] font-mono text-accent-gold uppercase tracking-wider bg-black/60 px-3 py-1.5 rounded-full border border-slate-200">
-                    <MapPin className="w-3 h-3" />
-                    <span>{indiaMd.country}</span>
+                    {/* Member Info */}
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-mono text-accent-blue font-bold uppercase tracking-wider">
+                          {member.designation}
+                        </span>
+                        {member.country && (
+                          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider px-2.5 py-0.5 rounded-full glass-pill font-bold">
+                            {member.country}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                        {member.name}
+                      </h3>
+                      {member.bio && (
+                        <p className="text-slate-600 text-sm leading-relaxed mt-2 font-sans line-clamp-4">
+                          {member.bio}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Director Bio Copy */}
-                <div className="md:col-span-7 flex flex-col gap-6">
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-xs font-mono text-accent-blue font-semibold uppercase tracking-wider">
-                      {indiaMd.designation}
-                    </span>
-                    <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                      {indiaMd.name}
-                    </h3>
-                  </div>
-
-                  <p className="text-slate-600 text-sm leading-relaxed font-sans">
-                    {indiaMd.bio}
-                  </p>
-
-                  <div className="h-[1px] bg-slate-100/60 w-full" />
-
-                  {/* Social contact triggers */}
-                  <div className="flex gap-4">
-                    <a
-                      href={`mailto:${indiaMd.email}`}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono text-slate-600 hover:text-slate-900 border border-slate-200/60 bg-slate-100/40 hover:bg-slate-100/60 transition-all"
-                    >
-                      <Mail className="w-4 h-4 text-accent-blue" />
-                      <span>{indiaMd.email}</span>
-                    </a>
-                    {indiaMd.linkedin && (
+                  {/* Social / Contact Actions */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-slate-200/80">
+                    {member.email && (
                       <a
-                        href={indiaMd.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono text-slate-600 hover:text-slate-900 border border-slate-200/60 bg-slate-100/40 hover:bg-slate-100/60 transition-all"
+                        href={`mailto:${member.email}`}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-mono text-slate-700 hover:text-slate-900 glass-pill hover:bg-white transition-colors shadow-sm"
+                        aria-label={`Email ${member.name}`}
                       >
-                        <Linkedin className="w-4 h-4 text-accent-blue" />
-                        <span>LinkedIn Profile</span>
+                        <Mail className="w-3.5 h-3.5 text-accent-blue" />
+                        <span className="truncate">{member.email}</span>
                       </a>
                     )}
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
 
-          {/* SECONDARY LEADERSHIP GRID: MANAGING DIRECTOR (USA) */}
-          <section className="flex flex-col gap-8 text-left">
-            <span className="text-xs font-mono uppercase tracking-widest text-slate-400 flex items-center gap-1.5 pl-1">
-              <Sparkles className="w-4 h-4 text-accent-blue" />
-              Global Division Board
-            </span>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {remainingDirectors.map((director: any) => (
-                <div
-                  key={director.name}
-                  className="glass-panel p-8 rounded-3xl flex flex-col justify-between gap-8 hover:border-slate-200 transition-all duration-500 group"
-                >
-                  <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    {/* Director avatar */}
-                    <div className="w-24 h-24 rounded-full overflow-hidden relative border border-slate-200 bg-slate-900 shrink-0">
-                      <Image
-                        src={director.image}
-                        alt={director.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    
-                    {/* Director designations */}
-                    <div className="flex flex-col gap-1 text-left">
-                      <span className="text-xs font-mono text-accent-blue font-semibold uppercase tracking-wider">
-                        {director.designation}
-                      </span>
-                      <h4 className="text-xl font-bold text-slate-900 tracking-tight">
-                        {director.name}
-                      </h4>
-                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3 h-3 text-accent-gold" />
-                        {director.country}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-slate-500 text-sm leading-relaxed font-sans text-left">
-                    {director.bio}
-                  </p>
-
-                  <div className="h-[1px] bg-slate-100/60 w-full" />
-
-                  {/* Social contacts */}
-                  <div className="flex gap-4">
-                    <a
-                      href={`mailto:${director.email}`}
-                      className="p-2.5 rounded-xl border border-slate-200/60 bg-slate-100/40 text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 transition-all"
-                      aria-label={`Email ${director.name}`}
-                    >
-                      <Mail className="w-4 h-4" />
-                    </a>
-                    {director.linkedin && (
+                    {member.linkedin && (
                       <a
-                        href={director.linkedin}
+                        href={member.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2.5 rounded-xl border border-slate-200/60 bg-slate-100/40 text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 transition-all"
-                        aria-label={`${director.name} LinkedIn`}
+                        className="p-2.5 rounded-xl glass-pill text-slate-600 hover:text-accent-blue hover:bg-white transition-colors shrink-0 shadow-sm"
+                        aria-label={`${member.name} LinkedIn Profile`}
                       >
                         <Linkedin className="w-4 h-4" />
                       </a>
@@ -253,7 +212,7 @@ export default async function TeamPage() {
                 </div>
               ))}
             </div>
-          </section>
+          )}
         </div>
       </main>
 

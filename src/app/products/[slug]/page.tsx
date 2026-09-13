@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { ArrowLeft, CheckCircle2, Info, Compass, Box, Truck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import InquiryButton from "@/components/products/InquiryButton";
@@ -174,9 +174,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
 
               {/* Specifications Card */}
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-6">
-                <h3 className="text-lg font-bold text-slate-900 tracking-wide flex items-center gap-2 border-b border-slate-200/60 pb-4">
-                  <Info className="w-4.5 h-4.5 text-accent-gold" />
+              <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-6">
+                <h3 className="text-lg font-bold text-slate-900 tracking-wide border-b border-slate-200/80 pb-4">
                   Product Specifications
                 </h3>
                 {product.specifications && product.specifications.length > 0 ? (
@@ -186,17 +185,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       if (parts.length >= 2) {
                         return (
                           <div key={idx} className="flex flex-col gap-1 border-b border-slate-200/60 pb-2 text-left">
-                            <span className="text-[10px] font-mono uppercase text-slate-400">
+                            <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">
                               {parts[0].trim()}
                             </span>
-                            <span className="text-sm text-slate-600 font-sans font-medium">
+                            <span className="text-sm text-slate-700 font-sans font-medium">
                               {parts.slice(1).join(":").trim()}
                             </span>
                           </div>
                         );
                       }
                       return (
-                        <div key={idx} className="flex gap-2 items-center text-sm text-slate-600 border-b border-slate-200/60 pb-2 py-1 text-left">
+                        <div key={idx} className="flex gap-2 items-center text-sm text-slate-700 border-b border-slate-200/60 pb-2 py-1 text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent-gold shrink-0" />
                           <span>{spec}</span>
                         </div>
@@ -209,26 +208,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
 
               {/* Export details card */}
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-6 text-left">
-                <h3 className="text-lg font-bold text-slate-900 tracking-wide flex items-center gap-2 border-b border-slate-200/60 pb-4">
-                  <Truck className="w-4.5 h-4.5 text-accent-blue" />
+              <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-6 text-left">
+                <h3 className="text-lg font-bold text-slate-900 tracking-wide border-b border-slate-200/80 pb-4">
                   Logistics & Export Terms
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed font-sans">
                   {product.exportInformation || "Contact our B2B desk for custom MOQ, container logistics, and payment terms."}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-[10px] uppercase text-slate-400 mt-2">
-                  <div className="flex gap-2 items-center">
-                    <Compass className="w-4 h-4 text-accent-blue" />
-                    <span>Incoterms: FOB, CIF, CFR</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-[10px] uppercase text-slate-500 mt-2">
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Incoterms</span>
+                    <span className="text-slate-900 font-bold">FOB, CIF, CFR</span>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <Box className="w-4 h-4 text-accent-gold" />
-                    <span>Port of Loading: Mundra / Kandla</span>
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Port of Loading</span>
+                    <span className="text-slate-900 font-bold">Mundra / Kandla</span>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <CheckCircle2 className="w-4 h-4 text-[#00d4ff]" />
-                    <span>Documentation: COO, Phytosanitary, BL</span>
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Documentation</span>
+                    <span className="text-slate-900 font-bold">COO, Phyto, BL</span>
                   </div>
                 </div>
               </div>
@@ -236,9 +234,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Right side: Summary Details & CTAs (Sticky) */}
             <div className="lg:col-span-5 lg:sticky lg:top-28 flex flex-col gap-6">
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-md flex flex-col gap-6 text-left">
+              <div className="p-8 rounded-3xl glass-panel shadow-lg flex flex-col gap-6 text-left">
                 <div className="flex flex-col gap-2">
-                  <div className="px-3 py-1 rounded-full text-[10px] font-mono bg-accent-blue/10 border border-accent-blue/20 text-accent-blue w-fit uppercase tracking-widest">
+                  <div className="px-3 py-1 rounded-full text-[10px] font-mono bg-accent-blue/10 border border-accent-blue/20 text-accent-blue w-fit uppercase tracking-widest font-bold">
                     {product.category}
                   </div>
                   <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
@@ -246,7 +244,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </h1>
                 </div>
 
-                <div className="h-[1px] bg-slate-100/60" />
+                <div className="h-[1px] bg-slate-200/80" />
 
                 {/* Short Description */}
                 <p className="text-slate-600 text-sm leading-relaxed font-sans">
@@ -256,10 +254,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {/* Features Checklist */}
                 {product.features && product.features.length > 0 && (
                   <div className="flex flex-col gap-3">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">
                       Key Highlights
                     </span>
-                    <ul className="flex flex-col gap-2 text-xs text-slate-500">
+                    <ul className="flex flex-col gap-2 text-xs text-slate-600 font-medium">
                       {product.features.map((feat: string, idx: number) => (
                         <li key={idx} className="flex gap-2.5 items-start">
                           <CheckCircle2 className="w-4 h-4 text-accent-gold shrink-0 mt-0.5" />
@@ -270,21 +268,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </div>
                 )}
 
-                <div className="h-[1px] bg-slate-100/60" />
+                <div className="h-[1px] bg-slate-200/80" />
 
                 {/* B2B Quote Button triggers custom Client Modal */}
                 <InquiryButton productName={product.name} />
 
                 {/* Extra Trust Banner */}
-                <div className="flex gap-2.5 items-center justify-center p-3.5 rounded-xl border border-slate-200/60 bg-slate-100/40 text-[10px] font-mono text-slate-400 uppercase">
-                  <ShieldAlert className="w-4 h-4 text-accent-blue shrink-0" />
-                  <span>Sourcing verified & SGS checks supported</span>
+                <div className="flex items-center justify-center p-3.5 rounded-2xl glass-pill text-[10px] font-mono text-slate-500 uppercase tracking-wider font-semibold">
+                  <span>Sourcing Verified & SGS Checks Supported</span>
                 </div>
               </div>
 
               {/* Rich Text Editor HTML Description Preview */}
               {product.description && product.description !== "<p></p>" && (
-                <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-4 text-left">
+                <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-4 text-left">
                   <h3 className="text-xs font-mono uppercase tracking-widest text-slate-400">
                     Product Narrative
                   </h3>

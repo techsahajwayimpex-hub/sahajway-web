@@ -27,10 +27,10 @@ export default function ContactForm() {
   }, [state?.success]);
 
   return (
-    <div className="glass-panel p-8 md:p-10 rounded-3xl w-full text-left relative overflow-hidden">
+    <div className="glass-panel p-8 md:p-10 rounded-3xl w-full text-left relative overflow-hidden shadow-lg">
       {state?.success ? (
         <div className="py-12 flex flex-col items-center gap-6 text-center">
-          <div className="p-4 rounded-full bg-accent-gold/10 text-accent-gold">
+          <div className="p-4 rounded-full bg-accent-gold/10 text-accent-gold border border-accent-gold/20">
             <CheckCircle className="w-12 h-12" />
           </div>
           <div className="flex flex-col gap-2">
@@ -43,7 +43,7 @@ export default function ContactForm() {
       ) : (
         <form action={formAction} className="flex flex-col gap-5">
           {state?.message && !state.success && (
-            <div className="p-4 rounded-xl border border-red-500/15 bg-red-500/5 text-red-400 text-xs font-mono">
+            <div className="p-4 rounded-xl border border-red-500/15 bg-red-500/5 text-red-500 text-xs font-mono">
               {state.message}
             </div>
           )}
@@ -51,7 +51,7 @@ export default function ContactForm() {
           {/* Row 1: Name & Company */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="name" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="name" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Full Name <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -60,15 +60,15 @@ export default function ContactForm() {
                 id="name"
                 required
                 placeholder="John Doe"
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.name && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.name[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.name[0]}</span>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="companyName" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="companyName" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Company Name <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -77,10 +77,10 @@ export default function ContactForm() {
                 id="companyName"
                 required
                 placeholder="Enterprise Import LLC"
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.companyName && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.companyName[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.companyName[0]}</span>
               )}
             </div>
           </div>
@@ -88,7 +88,7 @@ export default function ContactForm() {
           {/* Row 2: Email & Phone */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="email" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="email" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Corporate Email <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -97,15 +97,15 @@ export default function ContactForm() {
                 id="email"
                 required
                 placeholder="john@company.com"
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.email && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.email[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.email[0]}</span>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="phone" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="phone" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Phone Number <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -114,10 +114,10 @@ export default function ContactForm() {
                 id="phone"
                 required
                 placeholder="+1 (555) 019-2834"
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.phone && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.phone[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.phone[0]}</span>
               )}
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function ContactForm() {
           {/* Row 3: Destination Country & Product Interest */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="country" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="country" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Destination Country <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -134,15 +134,15 @@ export default function ContactForm() {
                 id="country"
                 required
                 placeholder="United States"
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.country && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.country[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.country[0]}</span>
               )}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="productInterest" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+              <label htmlFor="productInterest" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
                 Product Interest / Segment <span className="text-accent-gold">*</span>
               </label>
               <input
@@ -151,17 +151,17 @@ export default function ContactForm() {
                 id="productInterest"
                 required
                 placeholder="Baby Bathrobes, Jaipuri Quilts, Canvas Bags, etc."
-                className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors"
+                className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors"
               />
               {state?.errors?.productInterest && (
-                <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.productInterest[0]}</span>
+                <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.productInterest[0]}</span>
               )}
             </div>
           </div>
 
           {/* Message textarea */}
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="message" className="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+            <label htmlFor="message" className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
               Inquiry Message <span className="text-accent-gold">*</span>
             </label>
             <textarea
@@ -170,10 +170,10 @@ export default function ContactForm() {
               required
               rows={5}
               placeholder="Provide detailed specifications, fabric preferences, required quantities, target dispatch dates, or pricing structure expectations..."
-              className="px-4 py-3.5 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-900 text-sm focus:border-accent-blue focus:outline-none transition-colors resize-none"
+              className="px-4 py-3.5 rounded-xl glass-input text-slate-900 text-sm focus:outline-none transition-colors resize-none"
             />
             {state?.errors?.message && (
-              <span className="text-[10px] font-mono text-red-400 mt-1">{state.errors.message[0]}</span>
+              <span className="text-[10px] font-mono text-red-500 mt-1">{state.errors.message[0]}</span>
             )}
           </div>
 
