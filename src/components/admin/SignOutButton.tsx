@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
 
@@ -11,13 +12,13 @@ const isClerkConfigured =
 export default function AdminSignOutButton() {
   if (!isClerkConfigured) {
     return (
-      <a
+      <Link
         href="/"
         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-500 hover:text-red-400 rounded-xl hover:bg-red-500/5 transition-all w-full"
       >
         <LogOut className="w-4 h-4 shrink-0" />
         <span>Bypass Dashboard</span>
-      </a>
+      </Link>
     );
   }
 

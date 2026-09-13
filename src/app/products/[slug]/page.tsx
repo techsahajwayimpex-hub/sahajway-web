@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { ArrowLeft, CheckCircle2, Info, Compass, Box, Truck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import InquiryButton from "@/components/products/InquiryButton";
@@ -41,6 +41,10 @@ async function getProductBySlug(slug: string) {
   }
 }
 
+import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import { getProductSchema } from "@/lib/seo/schemas";
+
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -52,13 +56,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const title = product.seoTitle || `${product.name} | B2B Export Specification | Sahajway Impex`;
+  const description =
+    product.seoDescription ||
+    product.shortDescription ||
+    `Export specifications and wholesale sourcing for ${product.name} from Anand, Gujarat, India.`;
+
   return {
-    title: `${product.seoTitle || product.name} | Sahajway Impex`,
-    description: product.seoDescription || product.shortDescription,
+    title,
+    description,
+    alternates: {
+      canonical: `/products/${product.slug}`,
+    },
     openGraph: {
-      title: `${product.name} - Premium Export Specifications`,
-      description: product.shortDescription,
-      images: [{ url: product.images?.[0] || "" }],
+      title: `${product.name} - B2B Export Specifications`,
+      description,
+      type: "article",
+      images: [
+        {
+          url: product.images?.[0] || `/products/${product.slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Sahajway Impex`,
+      description,
     },
   };
 }
@@ -72,38 +98,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
   }
 
   // Generate structured product schema for SEO ranking
-  const productSchema = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": product.name,
-    "image": product.images,
-    "description": product.shortDescription,
-    "category": product.category,
-    "offers": {
-      "@type": "AggregateOffer",
-      "priceCurrency": "USD",
-      "price": "Contact for Quote",
-      "offeredBy": {
-        "@type": "Organization",
-        "name": "Sahajway Impex",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Anand",
-          "addressRegion": "Gujarat",
-          "addressCountry": "IN"
-        }
-      }
-    }
-  };
+  const productSchema = getProductSchema({
+    name: product.name,
+    slug: product.slug,
+    description: product.shortDescription || product.name,
+    category: product.category,
+    images: product.images || [],
+    specifications: product.specifications || [],
+    updatedAt: product.updatedAt,
+  });
+
+  const breadcrumbItems = [
+    { name: "Products", url: "/products" },
+    { name: product.name, url: `/products/${product.slug}` },
+  ];
 
   return (
     <>
-      {/* Inject Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-      />
-
+      <JsonLd schema={productSchema} />
       <Navbar />
 
       <main className="flex-1 min-h-screen pt-32 pb-24 relative bg-gradient-premium">
@@ -111,15 +123,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
         <div className="absolute top-1/6 right-1/12 w-[400px] h-[400px] rounded-full bg-glow-blue opacity-5 filter blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/6 left-1/12 w-[350px] h-[350px] rounded-full bg-glow-gold opacity-5 filter blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-8">
-          {/* Back button */}
-          <Link
-            href="/products"
-            className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-slate-900 transition-colors w-fit focus:outline-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back to Export Catalog
-          </Link>
+        <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col gap-6">
+          {/* Breadcrumb Navigation & Schema */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <Breadcrumbs items={breadcrumbItems} />
+            <Link
+              href="/products"
+              className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-slate-900 transition-colors w-fit focus:outline-none"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Back to Catalog
+            </Link>
+          </div>
 
           {/* Cinematic Split Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -159,9 +174,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
 
               {/* Specifications Card */}
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-6">
-                <h3 className="text-lg font-bold text-slate-900 tracking-wide flex items-center gap-2 border-b border-slate-200/60 pb-4">
-                  <Info className="w-4.5 h-4.5 text-accent-gold" />
+              <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-6">
+                <h3 className="text-lg font-bold text-slate-900 tracking-wide border-b border-slate-200/80 pb-4">
                   Product Specifications
                 </h3>
                 {product.specifications && product.specifications.length > 0 ? (
@@ -171,17 +185,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
                       if (parts.length >= 2) {
                         return (
                           <div key={idx} className="flex flex-col gap-1 border-b border-slate-200/60 pb-2 text-left">
-                            <span className="text-[10px] font-mono uppercase text-slate-400">
+                            <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">
                               {parts[0].trim()}
                             </span>
-                            <span className="text-sm text-slate-600 font-sans font-medium">
+                            <span className="text-sm text-slate-700 font-sans font-medium">
                               {parts.slice(1).join(":").trim()}
                             </span>
                           </div>
                         );
                       }
                       return (
-                        <div key={idx} className="flex gap-2 items-center text-sm text-slate-600 border-b border-slate-200/60 pb-2 py-1 text-left">
+                        <div key={idx} className="flex gap-2 items-center text-sm text-slate-700 border-b border-slate-200/60 pb-2 py-1 text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent-gold shrink-0" />
                           <span>{spec}</span>
                         </div>
@@ -194,26 +208,25 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </div>
 
               {/* Export details card */}
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-6 text-left">
-                <h3 className="text-lg font-bold text-slate-900 tracking-wide flex items-center gap-2 border-b border-slate-200/60 pb-4">
-                  <Truck className="w-4.5 h-4.5 text-accent-blue" />
+              <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-6 text-left">
+                <h3 className="text-lg font-bold text-slate-900 tracking-wide border-b border-slate-200/80 pb-4">
                   Logistics & Export Terms
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed font-sans">
                   {product.exportInformation || "Contact our B2B desk for custom MOQ, container logistics, and payment terms."}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-[10px] uppercase text-slate-400 mt-2">
-                  <div className="flex gap-2 items-center">
-                    <Compass className="w-4 h-4 text-accent-blue" />
-                    <span>Incoterms: FOB, CIF, CFR</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-[10px] uppercase text-slate-500 mt-2">
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Incoterms</span>
+                    <span className="text-slate-900 font-bold">FOB, CIF, CFR</span>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <Box className="w-4 h-4 text-accent-gold" />
-                    <span>Port of Loading: Mundra / Kandla</span>
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Port of Loading</span>
+                    <span className="text-slate-900 font-bold">Mundra / Kandla</span>
                   </div>
-                  <div className="flex gap-2 items-center">
-                    <CheckCircle2 className="w-4 h-4 text-[#00d4ff]" />
-                    <span>Documentation: COO, Phytosanitary, BL</span>
+                  <div className="flex flex-col gap-1 p-3 rounded-2xl glass-pill">
+                    <span className="text-slate-400">Documentation</span>
+                    <span className="text-slate-900 font-bold">COO, Phyto, BL</span>
                   </div>
                 </div>
               </div>
@@ -221,9 +234,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             {/* Right side: Summary Details & CTAs (Sticky) */}
             <div className="lg:col-span-5 lg:sticky lg:top-28 flex flex-col gap-6">
-              <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-md flex flex-col gap-6 text-left">
+              <div className="p-8 rounded-3xl glass-panel shadow-lg flex flex-col gap-6 text-left">
                 <div className="flex flex-col gap-2">
-                  <div className="px-3 py-1 rounded-full text-[10px] font-mono bg-accent-blue/10 border border-accent-blue/20 text-accent-blue w-fit uppercase tracking-widest">
+                  <div className="px-3 py-1 rounded-full text-[10px] font-mono bg-accent-blue/10 border border-accent-blue/20 text-accent-blue w-fit uppercase tracking-widest font-bold">
                     {product.category}
                   </div>
                   <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
@@ -231,7 +244,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </h1>
                 </div>
 
-                <div className="h-[1px] bg-slate-100/60" />
+                <div className="h-[1px] bg-slate-200/80" />
 
                 {/* Short Description */}
                 <p className="text-slate-600 text-sm leading-relaxed font-sans">
@@ -241,10 +254,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
                 {/* Features Checklist */}
                 {product.features && product.features.length > 0 && (
                   <div className="flex flex-col gap-3">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">
                       Key Highlights
                     </span>
-                    <ul className="flex flex-col gap-2 text-xs text-slate-500">
+                    <ul className="flex flex-col gap-2 text-xs text-slate-600 font-medium">
                       {product.features.map((feat: string, idx: number) => (
                         <li key={idx} className="flex gap-2.5 items-start">
                           <CheckCircle2 className="w-4 h-4 text-accent-gold shrink-0 mt-0.5" />
@@ -255,21 +268,20 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   </div>
                 )}
 
-                <div className="h-[1px] bg-slate-100/60" />
+                <div className="h-[1px] bg-slate-200/80" />
 
                 {/* B2B Quote Button triggers custom Client Modal */}
                 <InquiryButton productName={product.name} />
 
                 {/* Extra Trust Banner */}
-                <div className="flex gap-2.5 items-center justify-center p-3.5 rounded-xl border border-slate-200/60 bg-slate-100/40 text-[10px] font-mono text-slate-400 uppercase">
-                  <ShieldAlert className="w-4 h-4 text-accent-blue shrink-0" />
-                  <span>Sourcing verified & SGS checks supported</span>
+                <div className="flex items-center justify-center p-3.5 rounded-2xl glass-pill text-[10px] font-mono text-slate-500 uppercase tracking-wider font-semibold">
+                  <span>Sourcing Verified & SGS Checks Supported</span>
                 </div>
               </div>
 
               {/* Rich Text Editor HTML Description Preview */}
               {product.description && product.description !== "<p></p>" && (
-                <div className="p-8 rounded-3xl border border-slate-200/60 glass-panel backdrop-blur-sm flex flex-col gap-4 text-left">
+                <div className="p-8 rounded-3xl glass-panel shadow-sm flex flex-col gap-4 text-left">
                   <h3 className="text-xs font-mono uppercase tracking-widest text-slate-400">
                     Product Narrative
                   </h3>

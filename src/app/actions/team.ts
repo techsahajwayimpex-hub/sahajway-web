@@ -35,7 +35,7 @@ export async function createTeamMember(data: {
   // Upload image to Cloudinary/local if present
   if (data.imageData) {
     try {
-      imageUrl = await uploadImage(data.imageData);
+      imageUrl = await uploadImage(data.imageData, "sahajway-impex/team");
     } catch (err) {
       console.error("Failed to upload profile image, using fallback:", err);
     }
@@ -115,7 +115,7 @@ export async function updateTeamMember(
       if (imageUrl && !imageUrl.includes("unsplash.com")) {
         await deleteImage(imageUrl);
       }
-      imageUrl = await uploadImage(data.imageData);
+      imageUrl = await uploadImage(data.imageData, "sahajway-impex/team");
     } catch (err) {
       console.error("Failed to replace profile image:", err);
     }

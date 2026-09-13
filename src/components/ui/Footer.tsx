@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, MessageSquare, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, MessageSquare } from "lucide-react";
 import Logo from "./Logo";
 
 export default function Footer() {
@@ -24,7 +24,7 @@ export default function Footer() {
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full bg-slate-200/60 text-slate-500 hover:text-accent-blue hover:bg-slate-200 transition-colors"
+              className="p-3 rounded-full glass-pill text-slate-600 hover:text-accent-blue hover:bg-white transition-all shadow-sm"
               aria-label="LinkedIn"
             >
               <Linkedin className="w-4 h-4" />
@@ -33,7 +33,7 @@ export default function Footer() {
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full bg-slate-200/60 text-slate-500 hover:text-accent-blue hover:bg-slate-200 transition-colors"
+              className="p-3 rounded-full glass-pill text-slate-600 hover:text-pink-600 hover:bg-white transition-all shadow-sm"
               aria-label="Instagram"
             >
               <Instagram className="w-4 h-4" />
@@ -42,7 +42,7 @@ export default function Footer() {
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full bg-slate-200/60 text-slate-500 hover:text-accent-blue hover:bg-slate-200 transition-colors"
+              className="p-3 rounded-full glass-pill text-slate-600 hover:text-accent-blue hover:bg-white transition-all shadow-sm"
               aria-label="Facebook"
             >
               <Facebook className="w-4 h-4" />
@@ -51,7 +51,7 @@ export default function Footer() {
               href="https://wa.me/919638007789"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 rounded-full bg-slate-200/60 text-slate-500 hover:text-accent-blue hover:bg-slate-200 transition-colors"
+              className="p-3 rounded-full glass-pill text-slate-600 hover:text-emerald-600 hover:bg-white transition-all shadow-sm"
               aria-label="WhatsApp"
             >
               <MessageSquare className="w-4 h-4" />
@@ -115,8 +115,8 @@ export default function Footer() {
                 +91 96380 07789
               </a>
             </li>
-            <li className="flex gap-2 items-center text-xs font-mono text-accent-blue bg-accent-blue/5 border border-accent-blue/10 px-3 py-1.5 rounded-lg w-fit">
-              <Globe className="w-3.5 h-3.5 animate-spin-slow" />
+            <li className="flex gap-2 items-center text-xs font-mono text-slate-700 bg-slate-200/60 border border-slate-200 px-3 py-1.5 rounded-lg w-fit">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>IEC Status: Active</span>
             </li>
           </ul>

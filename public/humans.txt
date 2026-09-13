@@ -1,0 +1,14 @@
+/* TEAM */
+Managing Director (India): Prit Patel
+Managing Director (USA): North America Liaison Office
+Developer & Architecture: Antigravity IDE & Sahajway Tech Team
+Location: Anand, Gujarat, India
+
+/* SITE */
+Site: https://sahajwayimpex.com
+Language: English
+Standards: HTML5, CSS3, Schema.org, OpenGraph, JSON-LD, OpenAPI, Next.js App Router
+Components: React 19, Tailwind CSS v4, Lucide Icons, Three.js
+Backend: Next.js Server Components, MongoDB / Scalable Mock Store
+Hosting: Cloud Infrastructure
+Contact: contact@sahajwayimpex.com

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/sahajwayimpex";
+const MONGODB_URI = process.env.MONGODB_URI || "";
 const DATABASE_NAME = process.env.DATABASE_NAME || "sahajwayimpex";
 
 // Global cache to prevent multiple connections in Next.js hot-reloads
@@ -18,15 +18,14 @@ if (!cached) {
 }
 
 // Check if we should use mock database
-export const isUsingMockDB = 
-  !process.env.MONGODB_URI || 
-  process.env.MONGODB_URI.includes("placeholder") ||
-  process.env.MONGODB_URI.includes("localhost:27017") && !process.env.FORCE_REAL_DB;
+export const isUsingMockDB =
+  !process.env.MONGODB_URI ||
+  process.env.MONGODB_URI.includes("placeholder");
 
 const MOCK_DB_PATH = path.join(process.cwd(), "src/lib/mock_db_store.json");
 
 // Initial seed data
-const initialMockData = {
+export const initialMockData = {
   categories: [
     {
       _id: "cat_1",
@@ -164,6 +163,98 @@ const initialMockData = {
       active: true
     }
   ],
+  destinations: [
+    {
+      _id: "dest_1",
+      name: "New York, USA",
+      country: "United States",
+      lat: 40.7128,
+      lon: -74.006,
+      displayOrder: 1,
+      active: true
+    },
+    {
+      _id: "dest_2",
+      name: "London, UK",
+      country: "United Kingdom",
+      lat: 51.5074,
+      lon: -0.1278,
+      displayOrder: 2,
+      active: true
+    },
+    {
+      _id: "dest_3",
+      name: "Tokyo, Japan",
+      country: "Japan",
+      lat: 35.6762,
+      lon: 139.6503,
+      displayOrder: 3,
+      active: true
+    },
+    {
+      _id: "dest_4",
+      name: "Sydney, Australia",
+      country: "Australia",
+      lat: -33.8688,
+      lon: 151.2093,
+      displayOrder: 4,
+      active: true
+    },
+    {
+      _id: "dest_5",
+      name: "Frankfurt, Germany",
+      country: "Germany",
+      lat: 50.1109,
+      lon: 8.6821,
+      displayOrder: 5,
+      active: true
+    },
+    {
+      _id: "dest_6",
+      name: "Dubai, UAE",
+      country: "United Arab Emirates",
+      lat: 25.2048,
+      lon: 55.2708,
+      displayOrder: 6,
+      active: true
+    }
+  ],
+  banners: [
+    {
+      _id: "banner_1",
+      badge: "Premium Global B2B Exporter",
+      title: "Connecting Indian Craftsmanship With Global Markets",
+      highlightText: "Craftsmanship",
+      subtitle: "Sahajway Impex supplies handcrafted cotton textiles, quilted accessories, baby bathrobes and premium loungewear to importers, retailers and private-label brands worldwide.",
+      primaryButtonText: "Explore Products",
+      primaryButtonLink: "/products",
+      secondaryButtonText: "Contact Us",
+      secondaryButtonLink: "/contact",
+      image: "",
+      showGlobe: true,
+      backgroundColor: "bg-gradient-premium",
+      backgroundImage: "https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&w=2000&q=80",
+      displayOrder: 1,
+      active: true
+    },
+    {
+      _id: "banner_2",
+      badge: "Pure Organic Cotton & Artisan Heritage",
+      title: "Handcrafted Luxury Quilts & Organic Baby Apparel",
+      highlightText: "Luxury Quilts",
+      subtitle: "Direct-from-source wholesale exporting of GOTS-certified baby bathrobes and authentic Jaipuri tagai quilts manufactured for international retail standards.",
+      primaryButtonText: "View Quilts & Apparel",
+      primaryButtonLink: "/products",
+      secondaryButtonText: "Request B2B Quote",
+      secondaryButtonLink: "/contact",
+      image: "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1000&q=80",
+      showGlobe: false,
+      backgroundColor: "bg-gradient-premium",
+      backgroundImage: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=80",
+      displayOrder: 2,
+      active: true
+    }
+  ],
   inquiries: []
 };
 
@@ -180,8 +271,15 @@ if (typeof window === "undefined" && !fs.existsSync(MOCK_DB_PATH)) {
 export function readMockDB() {
   try {
     if (fs.existsSync(MOCK_DB_PATH)) {
-      const data = fs.readFileSync(MOCK_DB_PATH, "utf8");
-      return JSON.parse(data);
+      const data = JSON.parse(fs.readFileSync(MOCK_DB_PATH, "utf8"));
+      return {
+        categories: data.categories || initialMockData.categories,
+        products: data.products || initialMockData.products,
+        team: data.team || initialMockData.team,
+        destinations: data.destinations || initialMockData.destinations,
+        banners: data.banners || initialMockData.banners,
+        inquiries: data.inquiries || initialMockData.inquiries,
+      };
     }
   } catch (error) {
     console.error("Error reading mock DB:", error);
@@ -211,18 +309,21 @@ export async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      dbName: DATABASE_NAME
+      dbName: DATABASE_NAME,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 10000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log("MongoDB connected successfully");
-      return mongooseInstance;
-    }).catch((err) => {
-      console.error("MongoDB connection failed. Falling back to Mock DB.", err);
-      // Change connection mode to mock dynamically
-      (global as any).forceMockDB = true;
-      throw err;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongooseInstance) => {
+        console.log(`[MongoDB] Connected successfully to database: ${DATABASE_NAME}`);
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        console.error("[MongoDB] Connection failed, falling back to mock mode:", err.message);
+        throw err;
+      });
   }
 
   try {

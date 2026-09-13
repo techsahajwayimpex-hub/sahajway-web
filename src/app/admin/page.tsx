@@ -1,11 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { ShoppingBag, Layers, Users, Mail, ArrowRight, Clock } from "lucide-react";
+import { ShoppingBag, Layers, Users, Mail, ArrowRight, Clock, Sliders, Globe } from "lucide-react";
 import { connectDB, readMockDB, isUsingMockDB } from "@/lib/db";
 import ProductModel from "@/lib/models/Product";
 import CategoryModel from "@/lib/models/Category";
 import TeamMemberModel from "@/lib/models/TeamMember";
 import InquiryModel from "@/lib/models/Inquiry";
+import DestinationModel from "@/lib/models/Destination";
+import BannerModel from "@/lib/models/Banner";
 
 export const revalidate = 0;
 
@@ -13,28 +15,48 @@ async function getDashboardStats() {
   if (isUsingMockDB) {
     const db = readMockDB();
     return {
-      products: db.products.length,
-      categories: db.categories.length,
-      team: db.team.length,
-      inquiries: db.inquiries.length,
-      recentInquiries: db.inquiries.slice(0, 4),
+      products: (db.products || []).length,
+      categories: (db.categories || []).length,
+      team: (db.team || []).length,
+      destinations: (db.destinations || []).length,
+      banners: (db.banners || []).length,
+      inquiries: (db.inquiries || []).length,
+      recentInquiries: (db.inquiries || []).slice(0, 4),
     };
   }
 
   try {
-    await connectDB();
-    const [prodCount, catCount, teamCount, inqCount, recentInqs] = await Promise.all([
-      ProductModel.countDocuments(),
-      CategoryModel.countDocuments(),
-      TeamMemberModel.countDocuments(),
-      InquiryModel.countDocuments(),
-      InquiryModel.find().sort({ createdAt: -1 }).limit(4).lean(),
-    ]);
+    const conn = await connectDB();
+    if (!conn) {
+      const db = readMockDB();
+      return {
+        products: (db.products || []).length,
+        categories: (db.categories || []).length,
+        team: (db.team || []).length,
+        destinations: (db.destinations || []).length,
+        banners: (db.banners || []).length,
+        inquiries: (db.inquiries || []).length,
+        recentInquiries: (db.inquiries || []).slice(0, 4),
+      };
+    }
+
+    const [prodCount, catCount, teamCount, inqCount, destCount, bannerCount, recentInqs] =
+      await Promise.all([
+        ProductModel.countDocuments(),
+        CategoryModel.countDocuments(),
+        TeamMemberModel.countDocuments(),
+        InquiryModel.countDocuments(),
+        DestinationModel.countDocuments(),
+        BannerModel.countDocuments(),
+        InquiryModel.find().sort({ createdAt: -1 }).limit(4).lean(),
+      ]);
 
     return {
       products: prodCount,
       categories: catCount,
       team: teamCount,
+      destinations: destCount,
+      banners: bannerCount,
       inquiries: inqCount,
       recentInquiries: JSON.parse(JSON.stringify(recentInqs)),
     };
@@ -42,11 +64,13 @@ async function getDashboardStats() {
     console.error("Failed to query dashboard database counters. Using mock fallback:", err);
     const db = readMockDB();
     return {
-      products: db.products.length,
-      categories: db.categories.length,
-      team: db.team.length,
-      inquiries: db.inquiries.length,
-      recentInquiries: db.inquiries.slice(0, 4),
+      products: (db.products || []).length,
+      categories: (db.categories || []).length,
+      team: (db.team || []).length,
+      destinations: (db.destinations || []).length,
+      banners: (db.banners || []).length,
+      inquiries: (db.inquiries || []).length,
+      recentInquiries: (db.inquiries || []).slice(0, 4),
     };
   }
 }
@@ -55,10 +79,12 @@ export default async function AdminDashboardPage() {
   const stats = await getDashboardStats();
 
   const cards = [
-    { label: "Total Products", value: stats.products, icon: ShoppingBag, color: "text-accent-blue" },
-    { label: "Total Categories", value: stats.categories, icon: Layers, color: "text-accent-gold" },
-    { label: "Active Team Members", value: stats.team, icon: Users, color: "text-green-400" },
-    { label: "B2B Client Inquiries", value: stats.inquiries, icon: Mail, color: "text-cyan-400" },
+    { label: "Hero Banners", value: stats.banners, href: "/admin/banners", icon: Sliders, color: "text-accent-blue" },
+    { label: "Trade Destinations", value: stats.destinations, href: "/admin/destinations", icon: Globe, color: "text-purple-400" },
+    { label: "Total Products", value: stats.products, href: "/admin/products", icon: ShoppingBag, color: "text-accent-gold" },
+    { label: "Total Categories", value: stats.categories, href: "/admin/categories", icon: Layers, color: "text-emerald-400" },
+    { label: "Team Members", value: stats.team, href: "/admin/team", icon: Users, color: "text-amber-400" },
+    { label: "B2B Inquiries", value: stats.inquiries, href: "/admin/inquiries", icon: Mail, color: "text-cyan-400" },
   ];
 
   return (
@@ -67,27 +93,30 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col gap-1.5">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Overview</h1>
         <p className="text-slate-500 text-sm">
-          Analytics dashboard monitoring products, categories, team listings, and trade communication pipelines.
+          Analytics dashboard monitoring banners, destinations, products, categories, team listings, and trade communication pipelines.
         </p>
       </div>
 
       {/* Analytics Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, idx) => {
           const Icon = card.icon;
           return (
-            <div
+            <Link
               key={idx}
-              className="p-6 rounded-2xl border border-slate-200/60 bg-slate-100/40 flex items-center justify-between hover:border-slate-200 transition-all duration-300"
+              href={card.href}
+              className="p-6 rounded-2xl border border-slate-200/60 bg-slate-100/40 flex items-center justify-between hover:border-slate-300 hover:bg-slate-100/80 transition-all duration-300 group"
             >
               <div className="flex flex-col gap-1">
-                <span className="text-xs font-mono uppercase text-slate-400">{card.label}</span>
+                <span className="text-xs font-mono uppercase text-slate-400 group-hover:text-slate-600 transition-colors">
+                  {card.label}
+                </span>
                 <span className="text-3xl font-bold text-slate-900 tracking-tight mt-1">{card.value}</span>
               </div>
-              <div className={`p-4 rounded-xl bg-slate-100/60 border border-slate-200 ${card.color}`}>
+              <div className={`p-4 rounded-xl bg-slate-100/60 border border-slate-200 ${card.color} group-hover:scale-110 transition-transform`}>
                 <Icon className="w-5 h-5" />
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

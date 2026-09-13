@@ -1,9 +1,11 @@
 "use server";
 
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { connectDB, isUsingMockDB, readMockDB, writeMockDB } from "@/lib/db";
 import InquiryModel from "@/lib/models/Inquiry";
 import { sendInquiryEmails } from "@/lib/email";
+import { getAdminSession } from "@/lib/auth";
 
 // Validation schema using Zod
 const InquirySchema = z.object({
@@ -111,4 +113,31 @@ export async function submitInquiry(prevState: any, formData: FormData): Promise
     success: true,
     message: "Thank you! Your trade inquiry has been received. Our B2B desk will contact you shortly.",
   };
+}
+
+/**
+ * Server action to delete an inquiry (Admin only)
+ */
+export async function deleteInquiry(id: string) {
+  const session = await getAdminSession();
+  if (!session.isAuthenticated) {
+    throw new Error("Unauthorized access. Admin privileges required.");
+  }
+
+  if (isUsingMockDB) {
+    const db = readMockDB();
+    db.inquiries = (db.inquiries || []).filter((inq: any) => inq._id !== id);
+    writeMockDB(db);
+  } else {
+    try {
+      await connectDB();
+      await InquiryModel.findByIdAndDelete(id);
+    } catch (err: any) {
+      console.error("Failed to delete inquiry:", err);
+      return { success: false, message: err.message || "Failed to delete inquiry" };
+    }
+  }
+
+  revalidatePath("/admin/inquiries");
+  return { success: true };
 }

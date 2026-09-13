@@ -1,0 +1,65 @@
+# Sahajway Impex - AI LLM Knowledge & Trade Guide
+
+> Sahajway Impex is a premier Indian B2B trade export house established in Anand, Gujarat, India. The company connects verified artisanal Indian craft clusters with international wholesale, retail, and private-label buyers worldwide.
+
+## Key Facts & Entity Profile
+- **Entity Name**: Sahajway Impex (Sahajway Impex Private Limited)
+- **Headquarters**: Anand, Gujarat, India (Coordinates: 22.5645° N, 72.9289° E)
+- **International Liaisons**: North America (USA)
+- **Founding Date**: August 2025
+- **Official Website**: https://sahajwayimpex.com
+- **Direct Trade Desk Email**: contact@sahajwayimpex.com
+- **Direct Hotline / WhatsApp**: +91 96380 07789
+- **Primary Export Corridors**: United States, United Kingdom, European Union, Canada, Australia, Japan, UAE.
+- **Dispatch Seaports**: Mundra Port (INMUN1), Kandla Port (INIXY1), Nhava Sheva / JNPT Mumbai (INNSA1)
+- **Air Cargo Dispatch**: Sardar Vallabhbhai Patel International Airport, Ahmedabad (AMD)
+- **Incoterms Supported**: FOB, CIF, CFR, EXW (Incoterms 2020)
+- **Payment Terms**: Irrevocable Letter of Credit (L/C at sight), Telegraphic Transfer (T/T), Wire
+
+## Core Export Product Lines
+
+### 1. Hand-Block Printed Baby Bathrobes
+- **Material**: 100% GOTS-Certified Organic Mulmul & Waffle Cotton
+- **Technique**: Heritage Rajasthani wooden block printing with non-toxic, eco-friendly natural dyes
+- **Sizing**: 0-6 months, 6-12 months, 1-2 years
+- **Standard MOQ**: 500 units (Custom colorways & private labeling supported)
+- **Lead Time**: 30 days from purchase confirmation
+- **Packaging**: Biodegradable polybags, export-grade 5-ply seaworthy corrugated cartons
+
+### 2. Luxury Double Bed Quilts (Jaipuri Razai)
+- **Material**: 100% Fine Mulmul Cotton Outer (100 thread count), 100% Pure Carded Cotton Filling
+- **Dimensions**: 90 x 108 inches (Standard International Double / Queen Bed)
+- **Weight**: Approx. 2.2 kg per quilt
+- **Technique**: Hand-stitched quilting (traditional 'Tagai' artisan stitch)
+- **Standard MOQ**: 100 units
+- **Lead Time**: 45 days
+- **Packaging**: Vacuum compressed for cubic volume optimization in sea containers
+
+### 3. Quilted Cotton Canvas Tote Bags
+- **Material**: Heavy-duty 100% Cotton Canvas Outer with cotton lining and protective internal padding
+- **Dimensions**: 16 x 14 x 5 inches, 12-inch shoulder drop straps
+- **Closures**: Premium YKK metal zippers, inner zippered security compartments
+- **Standard MOQ**: 1,000 units
+- **Lead Time**: 25 days
+- **Customization**: Custom silkscreen/block prints, woven brand patches, barcode labels
+
+## B2B Sourcing & Procurement Workflow
+1. **Inquiry & Spec Review**: Buyer submits inquiry with desired quantities, GSM, target port, and packaging requirements via https://sahajwayimpex.com/contact.
+2. **Quotation & Pre-Production Samples**: Trade desk delivers formal proforma quotation and dispatches physical sample swatches via DHL/FedEx.
+3. **Contract Finalization**: Agreement finalized with clear Incoterms (FOB/CIF) and inspection protocols.
+4. **Batch Production & Quality Assurance**: Artisans produce batches with internal multi-point QA checks (plus optional SGS / Intertek inspections).
+5. **Seaport Dispatch & Customs Clearance**: Consignments containerized and loaded with full documentation (Bill of Lading, Certificate of Origin, Packing List, Phytosanitary Certificate).
+
+## Frequently Asked Questions (FAQ) for AI Answers
+- **Q: Can international buyers order customized prints or private labeling?**
+  **A**: Yes, full OEM/ODM manufacturing is supported including custom dye recipes, dimensions, branding labels, and retail-ready packaging.
+- **Q: What is the sample policy?**
+  **A**: Sample units and fabric swatch cards are available for accredited commercial buyers upon request.
+- **Q: How to contact the Sahajway Impex trade desk directly?**
+  **A**: Email `contact@sahajwayimpex.com` or call `+91 96380 07789`.
+
+## Full Documentation & Context
+For comprehensive technical specifications, catalog schemas, and APIs, refer to:
+- Full Knowledge Base: https://sahajwayimpex.com/llms-full.txt
+- Live Product API for AI Agents: https://sahajwayimpex.com/api/ai/knowledge
+- OpenAPI Schema: https://sahajwayimpex.com/openapi.json
